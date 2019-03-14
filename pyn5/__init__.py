@@ -6,7 +6,7 @@ __author__ = """William Hunter Patton"""
 __email__ = "pattonw@hhmi.org"
 __version__ = "0.1.0"
 
-from .python_wrappers import open, read, write
+from .python_wrappers import open, read, write, list_leaves
 from .pyn5 import (
     DatasetUINT8,
     DatasetUINT16,
@@ -25,6 +25,7 @@ __all__ = [
     "open",
     "read",
     "write",
+    "list_leaves",
     "create_dataset",
     "DatasetUINT8",
     "DatasetUINT16",

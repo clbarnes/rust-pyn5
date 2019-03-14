@@ -166,3 +166,18 @@ def write(
                 dataset.write_block(
                     block_index, block_data.transpose([2, 1, 0]).flatten()
                 )
+
+
+def list_leaves(dataset):
+    start = Path(dataset.root, dataset.dataset)
+    return list(
+        map(
+            lambda file_path: (
+                int(file_path.parent.parent.name),
+                int(file_path.parent.name),
+                int(file_path.name),
+            ),
+            filter(lambda file_path: file_path.is_file() and file_path.name != "attributes.json", start.glob("**/*")),
+        )
+    )
+

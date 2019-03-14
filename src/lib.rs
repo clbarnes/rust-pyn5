@@ -143,6 +143,7 @@ macro_rules! dataset {
         struct $dataset_name {
             n5: N5Filesystem,
             attr: DatasetAttributes,
+            root_path: String,
             path: String,
         }
 
@@ -163,6 +164,7 @@ macro_rules! dataset {
                             n5: n,
                             attr: attributes,
                             path: path_name.to_string(),
+                            root_path: root_path.to_string()
                         }
                     } else {
                         let n = N5Filesystem::open_or_create(root_path).unwrap();
@@ -171,6 +173,7 @@ macro_rules! dataset {
                             n5: n,
                             attr: attributes,
                             path: path_name.to_string(),
+                            root_path: root_path.to_string()
                         }
                     }
                 }))
@@ -179,6 +182,15 @@ macro_rules! dataset {
             #[getter]
             fn block_shape(&self) -> PyResult<(Vec<i32>)> {
                 Ok(self.attr.get_block_size().iter().cloned().collect())
+            }
+
+            #[getter]
+            fn root(&self) -> PyResult<String>{
+                Ok(self.root_path.clone())
+            }
+            #[getter]
+            fn dataset(&self) -> PyResult<String>{
+                Ok(self.path.clone())
             }
 
             fn read_ndarray(
