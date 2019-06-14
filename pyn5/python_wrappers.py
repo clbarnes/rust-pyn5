@@ -60,8 +60,7 @@ def open(root_path: str, dataset: str, dtype: str = "", read_only=True):
                 )
 
     unsupported_dtype_msg = "Given dtype {} is not supported. Please choose from ({})".format(
-        dtype,
-        tuple(dataset_types),
+        dtype, tuple(dataset_types)
     )
 
     if not dtype:

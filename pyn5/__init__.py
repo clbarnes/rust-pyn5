@@ -20,6 +20,9 @@ from .pyn5 import (
     DatasetFLOAT64,
     create_dataset,
 )
+from .attributes import AttributeManager
+from .dataset import Dataset
+from .file_group import File, Group
 
 __all__ = [
     "open",
