@@ -15,6 +15,7 @@ from h5py_like.base import H5ObjectLike
 
 class NumpyEncoder(json.JSONEncoder):
     """JSON encoder object which converts numpy arrays to lists."""
+
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
@@ -31,6 +32,7 @@ class AttributeManager(AttributeManagerBase):
     By default, it is an empty dict.
     New instances make a deep copy of the class variable.
     """
+
     _dataset_keys = {"dimensions", "blockSize", "dataType", "compression"}
     _encoder = NumpyEncoder
     _dump_kwargs = dict()
@@ -98,7 +100,7 @@ class AttributeManager(AttributeManagerBase):
             return self._dataset_keys.issubset(attrs)
 
     @contextmanager
-    def _open_attributes(self, write: bool=False) -> Dict[str, Any]:
+    def _open_attributes(self, write: bool = False) -> Dict[str, Any]:
         """Return attributes as a context manager.
 
         :param write: Whether to write changes to the attributes dict.
