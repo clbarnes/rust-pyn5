@@ -27,7 +27,9 @@ with open("requirements_dev.txt") as req_file:
         if not match:
             continue
         pkg_name = match.group(0)
-        if pkg_name in ("tox", "flake8", "coverage", "pytest", "pytest-runner"):
+        if pkg_name in (
+            "tox", "flake8", "coverage", "pytest", "pytest-runner", "tifffile", "pytest-benchmark"
+        ):
             test_requirements.append(line)
         if pkg_name in ("setuptools_rust",):
             setup_requirements.append(line)

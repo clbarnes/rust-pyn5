@@ -12,3 +12,5 @@ numpy==1.16.4
 pytest==4.6.3
 pytest-runner==5.1
 h5py_like==0.2.0
+tifffile==2019.5.30
+pytest-benchmark==3.2.2

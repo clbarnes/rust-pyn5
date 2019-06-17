@@ -58,10 +58,14 @@ lint: ## check style with flake8
 	flake8 pyn5 tests
 
 test: ## run tests quickly with the default Python
-	python setup.py test
+	python setup.py test --addopts "--benchmark-disable"
 
 test-all: ## run tests on every Python version with tox
 	tox
+
+bench:
+	python setup.py build && \
+	pytest --benchmark-enable --benchmark-only --benchmark-verbose --benchmark-max-time=300
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source pyn5 setup.py test
