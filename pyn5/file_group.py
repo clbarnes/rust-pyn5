@@ -1,3 +1,4 @@
+from __future__ import annotations
 import shutil
 import warnings
 from pathlib import Path
@@ -8,14 +9,27 @@ import numpy as np
 from h5py_like import GroupBase, FileMixin, AttributeManagerBase, Mode, mutation
 from h5py_like.common import Name
 from h5py_like.base import H5ObjectLike
+from pyn5 import Dataset
 from pyn5.attributes import AttributeManager
-from pyn5.dataset import Dataset
 from .pyn5 import create_dataset
 
 N5_VERSION = "2.0.2"
 
 
 class Group(GroupBase):
+    def __init__(self, name: str, parent: Group):
+        """
+
+        :param name: basename of the group
+        :param parent: group to which the group belongs
+        """
+        self._name = name
+        self._parent = parent
+        self._path = self.parent._path / name
+
+        self._attrs = AttributeManager.from_parent(self)
+        super().__init__(self.mode)
+
     def _create_child_group(self, name) -> GroupBase:
         dpath = self._path / name
 
@@ -24,10 +38,10 @@ class Group(GroupBase):
         except KeyError:
             pass
         else:
-            if isinstance(obj, Dataset):
-                raise TypeError(f"Dataset found at {dpath}")
-            elif isinstance(obj, Group):
+            if isinstance(obj, Group):
                 raise FileExistsError(f"Group already exists at {dpath}")
+            else:
+                raise TypeError(f"Dataset found at {dpath}")
 
         dpath.mkdir()
         return Group(name, self)
@@ -76,14 +90,6 @@ class Group(GroupBase):
             ds[...] = data
         return ds
 
-    def __init__(self, name, parent):
-        self._name = name
-        self._parent = parent
-        self._path = self.parent._path / name
-
-        self._attrs = AttributeManager.from_parent(self)
-        super().__init__(self.mode)
-
     def _get_child(self, name) -> H5ObjectLike:
         dpath = self._path / name
         if not dpath.is_dir():
@@ -96,6 +102,7 @@ class Group(GroupBase):
 
     @mutation
     def __setitem__(self, name, obj):
+        """Not implemented"""
         raise NotImplementedError()
 
     def copy(
@@ -109,10 +116,11 @@ class Group(GroupBase):
         expand_refs=False,
         without_attrs=False,
     ):
+        """Not implemented"""
         raise NotImplementedError()
 
     @property
-    def attrs(self) -> AttributeManagerBase:
+    def attrs(self) -> AttributeManager:
         return self._attrs
 
     @property
@@ -137,7 +145,14 @@ class Group(GroupBase):
 
 
 class File(FileMixin, Group):
+    def __init__(self, name, mode=Mode.READ_WRITE_CREATE):
+        super().__init__(name, mode)
+        self._require_dir(self.filename)
+        self._path = self.filename
+        self._attrs = AttributeManager.from_parent(self)
+
     def __setitem__(self, name, obj):
+        """Not implemented"""
         raise NotImplementedError()
 
     def copy(
@@ -151,13 +166,8 @@ class File(FileMixin, Group):
         expand_refs=False,
         without_attrs=False,
     ):
+        """Not implemented"""
         raise NotImplementedError()
-
-    def __init__(self, name, mode=Mode.READ_WRITE_CREATE):
-        super().__init__(name, mode)
-        self._require_dir(self.filename)
-        self._path = self.filename
-        self._attrs = AttributeManager.from_parent(self)
 
     def _require_dir(self, dpath: Path):
         if dpath.is_file():

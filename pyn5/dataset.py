@@ -33,7 +33,12 @@ dataset_types = {
 
 
 class Dataset(DatasetBase):
-    def __init__(self, name, parent):
+    def __init__(self, name: str, parent: "Group"):
+        """
+
+        :param name: basename of the dataset
+        :param parent: group to which the dataset belongs
+        """
         super().__init__(parent.mode)
         self._name = name
         self._parent = parent
