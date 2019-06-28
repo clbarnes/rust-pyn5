@@ -1,4 +1,4 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help
+.PHONY: clean clean-test clean-pyc clean-build lint test test-all coverage servedocs release dist install data bench docs help
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -30,14 +30,17 @@ DATA_DIR = tests/data
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-develop ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+
+clean-develop:
+	find pyn5 -name 'pyn5.*.so' -exec rm -f {} +
+	find . -name '*.egg-info' -exec rm -fr {} +
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -91,9 +94,16 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
+install-dev: clean
+	pip install -r requirements_dev.txt
+	python setup.py develop
+
 $(DATA_DIR)/JeffT1_le.tif:
 	mkdir -p $(DATA_DIR) && \
 	wget -P $(DATA_DIR) https://imagej.nih.gov/ij/images/t1-head-raw.zip && \
 	unzip $(DATA_DIR)/t1-head-raw.zip -d $(DATA_DIR)
 
 data: $(DATA_DIR)/JeffT1_le.tif
+
+bench: install data
+	pytest --benchmark-only
